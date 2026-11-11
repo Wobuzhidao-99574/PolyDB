@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+{% block title %}PolyDB - Advanced Search{% endblock %}
+{% block nav_search %}active{% endblock %}
+
+{% block extra_style %}
+.main-wrap { max-width: 1200px; margin: 24px auto 40px; padding: 0 40px; }
+.search-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--primary); margin-bottom: 22px; }
+.stab {padding: 10px 26px; font-size: 0.92rem; color: #556677;
+    text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.stab:hover { color: var(--primary); }
+.stab.active { color: var(--primary); font-weight: 700; border-bottom-color: var(--primary); }
+.field label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: #556677; }
+.field select { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; font-size: 0.9rem; }
+.col-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin: 10px 0 16px; }
+.col-check { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #5a4820; }
+.col-check input { accent-color: var(--primary); }
+.mol-preview { max-width: 120px; max-height: 90px; }
+.table-card { max-height: 520px; overflow-y: auto; }
+.data-table thead th { position: sticky; top: 0; background: #fff; z-index: 1; }
+
+/*── Filter Builder ── */
+.filter-section-title { font-size: 0.85rem; color: #556677; font-weight: 600; margin-bottom: 10px; }
+.filter-block { margin-bottom: 10px; padding: 10px 12px; background: #fdf8f2; border-radius: 6px; border: 1px solid #ecdcc0; }
+.filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+.filter-label { font-size: 0.85rem; color: #5a4820; font-weight: 600; }
+.filter-vals  { font-size: 0.82rem; color: var(--primary); font-weight: 700; }
+.filter-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 0; }
+.filter-remove:hover { color: #e74c3c; }
+.range-wrap { position: relative; height: 22px; margin: 8px 2px 2px; }
+.range-wrap input[type=range] {
+    position: absolute; width: 100%; pointer-events: none;
+    -webkit-appearance: none; appearance: none; background: none;
+    top: 0; height: 22px; margin: 0; padding: 0;
+}
+.range-wrap input[type=range].r-min { z-index: 3; }
+.range-wrap input[type=range].r-max { z-index: 4; }
+.range-wrap input[type=range]::-webkit-slider-thumb {
+    pointer-events: all; -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--primary); cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+.range-wrap input[type=range]::-moz-range-thumb {
+    pointer-events: all; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--primary); cursor: pointer; border: 2px solid #fff;
+}
+.range-track { position: absolute; top: 9px; left: 0; right: 0; height: 4px; background: #e0d5c5; border-radius: 2px; pointer-events: none; }
+.range-fill{ position: absolute; height: 100%; background: var(--primary); border-radius: 2px; }
+.add-prop-wrap { position: relative; display: inline-block; margin-top: 6px; }
+.add-prop-btn { background: none; border: 1.5px dashed var(--primary); color: var(--primary); padding: 7px 18px; border-radius: 4px; cursor: pointer; font-size: 0.87rem; }
+.add-prop-btn:hover { background: #fdf6ec; }
+.prop-menu { display: none; position: absolute; top: calc(100% + 4px); left: 0; background: #fff; border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,.12); padding: 4px 0; z-index: 100; min-width: 160px; }
+.prop-menu.open { display: block; }
+.prop-menu-item { padding: 8px 16px; cursor: pointer; font-size: 0.87rem; color: #334455; }
+.prop-menu-item:hover { background: #f5f0e8; color: var(--primary); }
+.prop-menu-item.used { color: #bbb; cursor: default; pointer-events: none; }
+{% endblock %}
+
+{% block body %}
+<div class="page-banner">
+    <h1>Search</h1>
+    <p>Advanced search · Similarity search · Synthesis route search</p>
+</div>
+<div class="breadcrumb">
+    <a href="/home">Home</a> &gt; <span>Advanced Search</span>
+</div>
+
+<div class="main-wrap">
+    <div class="search-tabs">
+        <a href="/search/advanced"class="stab active">🔍 Advanced Search</a>
+        <a href="/search/similarity" class="stab">🔍 Similarity Search</a>
+        <a href="/search/route"      class="stab">🔍 Synthesis Route Search</a>
+    </div>
+
+    <div class="card">
+        <h2>Polyamine Conjugate Selection</h2>
+        <form method="POST" action="/search/advanced" id="search-form">
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Category</label>
+                <select name="category">
+                    <option value="ALL"{% if category=='ALL' %}selected{% endif %}>ALL</option>
+                    <option value="spermidine" {% if category=='spermidine' %}selected{% endif %}>Spermidine</option>
+                    <option value="spermine"   {% if category=='spermine' %}selected{% endif %}>Spermine</option></select>
+            </div>
+
+            <!-- Physicochemical Filter Builder -->
+            <div style="margin-bottom:16px;">
+                <div class="filter-section-title">Physicochemical Filters</div>
+                <div id="filter-list"></div>
+                <div class="add-prop-wrap">
+                    <button type="button" class="add-prop-btn" id="add-prop-btn">＋ Add Property</button><div class="prop-menu" id="prop-menu"></div>
+                </div>
+            </div>
+
+            <!-- extra_cond 由 JS 在提交前填入 -->
+            <input type="hidden" name="extra_cond" id="extra_cond" value="{{ extra_cond }}">
+
+            <div style="font-size:0.85rem;color:#5a4820;margin-bottom:8px;">Select columns to display:</div>
+            <div class="col-grid">
+                {% for col in all_columns %}
+                <label class="col-check">
+                    <input type="checkbox" name="col_{{ col }}"
+                           {% if col in selected_cols %}checked{% endif %}>
+                    {{ col }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn-primary" style="width:100%;padding:11px;">Start Search</button>
+        </form>
+    </div>
+
+    {% if error_msg %}
+    <div class="alert-danger">{{ error_msg }}</div>
+    {% endif %}
+
+    {% if result_df is not none %}
+    <div class="card">
+        <h2>
+            Results<span style="font-weight:400;font-size:0.85rem;color:var(--muted);margin-left:12px;">
+                Page {{ page }} / {{ total_pages }} &nbsp;|&nbsp; Total {{ total_records }} records
+            </span>
+        </h2>
+
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ url_for('main.search_advanced', page=page-1, category=category, extra_cond=extra_cond, cols=selected_cols, sort_by=sort_by, sort_dir=sort_dir) }}">⬅ Previous</a>
+            {% else %}
+            <span class="disabled">⬅ Previous</span>
+            {% endif %}
+
+            <span class="current">{{ page }}</span><span style="color:var(--muted);">/</span>
+            <span>{{ total_pages }}</span>
+
+            {% if page < total_pages %}
+            <a href="{{ url_for('main.search_advanced', page=page+1, category=category, extra_cond=extra_cond, cols=selected_cols, sort_by=sort_by, sort_dir=sort_dir) }}">Next ➡</a>
+            {% else %}
+            <span class="disabled">Next ➡</span>
+            {% endif %}
+        </div>
+
+        {% if result_df.empty %}
+        <div class="hint-box">No results found for the given conditions.</div>
+        {% else %}
+        <form id="sort-form" method="GET" action="{{ url_for('main.search_advanced') }}" style="display:none;">
+            <input type="hidden" name="page" value="1">
+            <input type="hidden" name="category" value="{{ category }}">
+            <input type="hidden" name="extra_cond" value="{{ extra_cond }}">
+            <input type="hidden" name="sort_by" id="sort-form-sort_by" value="">
+            <input type="hidden" name="sort_dir" id="sort-form-sort_dir" value="">
+            {% for c in selected_cols %}
+            <input type="hidden" name="cols" value="{{ c }}">
+            {% endfor %}
+        </form>
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        {% if img_dict %}<th>Structure</th>{% endif %}
+                        {% for col in result_df.columns %}
+                        <th style="cursor:pointer;user-select:none;white-space:nowrap;"
+                                onclick="doSort('{{ col }}')">
+                                {{ col }}
+                                {% if sort_by == col %}
+                                      {% if sort_dir == 'asc' %}▲{% else %}▼{% endif %}
+                                {% else %}⇅{% endif %}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result_df.itertuples() %}
+                    <tr>
+                        {% if img_dict %}
+                        <td>
+                            {% set smi = row.smiles if'smiles' in result_df.columns else '' %}
+                            {% if smi and smi in img_dict %}<img src="{{ img_dict[smi] }}" class="mol-preview" alt="mol">
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                        {% for val in row[1:] %}
+                        {% set col = result_df.columns[loop.index0] %}
+                        <td>{{ "%.3f"|format(val) if val is not none and col in num_columns else (val if val is not none else '') }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+//属性定义：列名→ { label, min, max, step, fmt }
+const PROPS = {
+  mw:{ label: 'Molecular Weight', min: 84,max: 701, step: 1,    fmt: v => Math.round(v) },
+  logp: { label: 'LogP',min: -9,  max: 13,   step: 0.1,  fmt: v => (+v).toFixed(1) },
+  tpsa: { label: 'TPSA',             min: 0,    max: 393,  step: 1,    fmt: v => Math.round(v) },
+  hba:  { label: 'HBA',              min: 2,    max: 25,   step: 1,    fmt: v => Math.round(v) },
+  hbd:  { label: 'HBD',              min: 0,    max: 24,   step: 1,    fmt: v => Math.round(v) },
+  rotb: { label: 'RotB',             min: 0,    max: 41,   step: 1,    fmt: v => Math.round(v) },
+  qed:  { label: 'QED',              min: 0,    max: 1,step: 0.01, fmt: v => (+v).toFixed(2) },
+  sa:   { label: 'SA',               min: 0.8,    max: 7.6,   step: 0.1,  fmt: v => (+v).toFixed(1) },
+};
+
+// 更新轨道高亮和数值显示
+function updateFill(block) {
+  const p = PROPS[block.dataset.prop];
+  const rMin = block.querySelector('.r-min');
+  const rMax = block.querySelector('.r-max');
+  const lo = parseFloat(rMin.value), hi = parseFloat(rMax.value);
+  const pct = (v) => ((v - p.min) / (p.max - p.min) * 100) + '%';
+  const fill = block.querySelector('.range-fill');
+  fill.style.left= pct(lo);
+  fill.style.width = ((hi - lo) / (p.max - p.min) * 100) + '%';
+  block.querySelector('.filter-vals').textContent = p.fmt(lo) + ' – ' + p.fmt(hi);// 当两个拇指重叠时，让min拇指可以向右拖
+  rMin.style.zIndex = lo >= hi ? 5 : 3;
+}
+
+// 添加一个属性滑块
+function addFilter(prop, initLo, initHi) {
+  if (document.querySelector(`.filter-block[data-prop="${prop}"]`)) return;
+  const p = PROPS[prop];
+  const lo = (initLo !== undefined && initLo !== null) ? initLo : p.min;
+  const hi = (initHi !== undefined && initHi !== null) ? initHi : p.max;
+
+  const block = document.createElement('div');
+  block.className = 'filter-block';
+  block.dataset.prop = prop;
+  block.innerHTML = `
+    <div class="filter-header">
+      <span class="filter-label">${p.label}</span>
+      <span class="filter-vals"></span>
+      ${prop !== 'mw' ? '<button type="button" class="filter-remove" title="Remove">×</button>' : ''}
+    </div>
+    <div class="range-wrap">
+      <div class="range-track"><div class="range-fill"></div></div>
+      <input type="range" class="r-min" min="${p.min}" max="${p.max}" step="${p.step}" value="${lo}">
+      <input type="range" class="r-max" min="${p.min}" max="${p.max}" step="${p.step}" value="${hi}">
+    </div>`;
+
+  document.getElementById('filter-list').appendChild(block);
+  updateFill(block);
+
+  block.querySelector('.r-min').addEventListener('input', function() {
+    if (+this.value > +block.querySelector('.r-max').value)
+      block.querySelector('.r-max').value = this.value;
+    updateFill(block);
+  });
+  block.querySelector('.r-max').addEventListener('input', function() {
+    if (+this.value < +block.querySelector('.r-min').value)
+      block.querySelector('.r-min').value = this.value;
+    updateFill(block);
+  });
+  if (prop !== 'mw') {
+    block.querySelector('.filter-remove').addEventListener('click', () => {
+      block.remove();refreshMenu();
+    });
+  }refreshMenu();
+}
+
+// 刷新下拉菜单（已选的变灰）
+function refreshMenu() {
+  const menu = document.getElementById('prop-menu');
+  menu.innerHTML = Object.entries(PROPS).map(([key, p]) => {
+    const used = !!document.querySelector(`.filter-block[data-prop="${key}"]`);
+    return `<div class="prop-menu-item${used ? ' used' : ''}" data-prop="${key}">${p.label}</div>`;
+  }).join('');
+  menu.querySelectorAll('.prop-menu-item:not(.used)').forEach(item =>
+    item.addEventListener('click', function() {
+      addFilter(this.dataset.prop);menu.classList.remove('open');
+    })
+  );
+}
+
+// 下拉按钮开关
+document.getElementById('add-prop-btn').addEventListener('click', function(e) {
+  e.stopPropagation();
+  refreshMenu();
+  document.getElementById('prop-menu').classList.toggle('open');
+});
+document.addEventListener('click', () =>
+  document.getElementById('prop-menu').classList.remove('open')
+);
+
+// 提交前将滑块状态序列化为 SQL 片段
+document.getElementById('search-form').addEventListener('submit', function() {
+  const parts = [];
+  document.querySelectorAll('.filter-block').forEach(block => {
+    const prop = block.dataset.prop, p = PROPS[prop];
+    const lo = parseFloat(block.querySelector('.r-min').value);
+    const hi = parseFloat(block.querySelector('.r-max').value);
+    if (lo > p.min) parts.push(`${prop} >= ${lo}`);
+    if (hi < p.max) parts.push(`${prop} <= ${hi}`);
+  });
+  document.getElementById('extra_cond').value = parts.join(' AND ');
+});
+
+// 页面加载时：从 extra_cond 反向还原滑块状态
+(function restoreFilters() {
+  const cond = document.getElementById('extra_cond').value;
+  const parsed = {};
+  const re = /(\w+)\s*(>=|<=)\s*([\d.eE+\-]+)/g;
+  let m;
+  while ((m = re.exec(cond)) !== null) {
+    const [, prop, op, val] = m;
+    if (!PROPS[prop]) continue;
+    if (!parsed[prop]) parsed[prop] = { lo: null, hi: null };
+    if (op === '>=') parsed[prop].lo = parseFloat(val);
+    else             parsed[prop].hi = parseFloat(val);
+  }
+  // mw 始终显示
+  const mwState = parsed['mw'];
+  addFilter('mw', mwState?.lo, mwState?.hi);
+  // 其余恢复
+  Object.entries(parsed).forEach(([prop, s]) => {
+    if (prop !== 'mw') addFilter(prop, s.lo, s.hi);
+  });
+})();
+
+// ── 表格排序 ──────────────────────────────────────
+document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', function() {
+        const table = this.closest('table');
+        const tbody = table.querySelector('tbody');
+        const colIdx = parseInt(this.dataset.col);
+        const hasImg = table.querySelector('thead tr th:first-child').classList.contains('sortable') === false;
+        const tdIdx = hasImg ? colIdx + 1 : colIdx;
+
+        let dir = parseInt(this.dataset.dir) || 0;
+        dir = dir <= 0 ? 1 : -1;
+        this.dataset.dir = dir;
+
+        table.querySelectorAll('th.sortable').forEach(t => {
+            t.querySelector('.sort-icon').textContent = '⇅';
+            if (t !== this) t.dataset.dir = 0;
+        });
+        this.querySelector('.sort-icon').textContent = dir === 1 ? '▲' : '▼';
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+            const aCell = a.querySelectorAll('td')[tdIdx];
+            const bCell = b.querySelectorAll('td')[tdIdx];
+            const aText = aCell ? aCell.textContent.trim() : '';
+            const bText = bCell ? bCell.textContent.trim() : '';
+            const aNum = parseFloat(aText);
+            const bNum = parseFloat(bText);
+            if (!isNaN(aNum) && !isNaN(bNum)) return (aNum - bNum) * dir;
+            return aText.localeCompare(bText) * dir;
+        });
+        rows.forEach(r => tbody.appendChild(r));
+    });
+});
+function doSort(col) {
+    const curSort = '{{ sort_by or "" }}';
+    const curDir  = '{{ sort_dir or "asc" }}';
+    const newDir  = (curSort === col && curDir === 'asc') ? 'desc' : 'asc';
+    document.getElementById('sort-form-sort_by').value  = col;
+    document.getElementById('sort-form-sort_dir').value = newDir;
+    document.getElementById('sort-form').submit();
+}
+</script>
+{% endblock %}

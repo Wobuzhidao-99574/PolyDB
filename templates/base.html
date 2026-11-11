@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PolyDB{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep:    #0d1f35;
+            --navy:    #12345a;
+            --primary: #1a5fa8;
+            --accent:  #c8920a;
+            --teal:    #0e7c6e;
+            --page-bg: #f2f5f9;
+            --white:   #ffffff;
+            --text:    #1c2b3a;
+            --muted:   #6a7d90;
+            --border:  #dce4ee;
+            --red:     #b52828;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{
+            font-family:'IBM Plex Sans',sans-serif;
+            background:var(--page-bg);
+            color:var(--text);
+            font-size:14px;
+            line-height:1.6;
+        }
+
+        /* ===== TOP STRIP ===== */
+        .top-strip{
+            background:var(--deep);
+            color:rgba(255,255,255,.55);
+            font-size:.74rem;
+            padding:5px 0;
+            border-bottom:2px solid var(--accent);
+        }
+        .top-strip-inner{
+            max-width:1200px;margin:0 auto;padding:0 40px;
+            display:flex;align-items:center;
+        }
+
+        /* ===== LOGO BAR ===== */
+        .logo-bar{
+            background:linear-gradient(120deg, #eef3f9 0%, #f6f9fc 45%, #e8f0f8 100%);
+            border-bottom:1px solid var(--border);
+            padding:0;
+            box-shadow:inset 0 -1px 0 rgba(26,95,168,.06);
+        }
+        .logo-bar-inner{
+            max-width:1200px;margin:0 auto;padding:14px 40px;
+            display:flex;justify-content:space-between;align-items:center;
+        }
+        .logo-left{display:flex;align-items:center;gap:14px;}
+        .logo-emblem{
+            width:56px;height:56px;
+            background:linear-gradient(135deg,var(--navy),var(--primary));
+            border-radius:6px;
+            display:flex;flex-direction:column;
+            align-items:center;justify-content:center;
+            color:#fff;
+            font-family:'IBM Plex Mono',monospace;
+            font-size:.65rem;font-weight:500;
+            letter-spacing:1px;
+            line-height:1.3;
+            flex-shrink:0;
+        }
+        .logo-emblem span{font-size:1.05rem;font-weight:700;letter-spacing:2px;}
+        .logo-name-wrap a{
+            display:block;
+            font-size:1.65rem;font-weight:700;
+            color:var(--deep);
+            letter-spacing:3px;
+            text-decoration:none;
+            font-family:'Noto Serif SC',serif;
+            line-height:1.1;
+        }
+        .logo-name-wrap .logo-en{
+            font-size:.72rem;color:var(--muted);
+            letter-spacing:3px;margin-top:3px;
+            font-family:'IBM Plex Sans',sans-serif;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar{
+            background:var(--primary);
+            position:sticky;top:0;z-index:300;
+            box-shadow:0 2px 10px rgba(0,0,0,.22);
+        }
+        .navbar-inner{
+            max-width:1200px;margin:0 auto;padding:0 40px;
+            display:flex;align-items:center;justify-content:space-between;
+        }
+        .nav-links{display:flex;}
+        .nav-item{
+            color:rgba(255,255,255,.82);
+            padding:0 20px;height:46px;line-height:46px;
+            font-size:.88rem;font-weight:500;
+            text-decoration:none;
+            border-bottom:3px solid transparent;
+            transition:all .2s;white-space:nowrap;
+        }
+        .nav-item:hover{color:#fff;background:rgba(255,255,255,.1);}
+        .nav-item.active{color:#fff;border-bottom-color:var(--accent);background:rgba(255,255,255,.08);}
+        .nav-search-box{
+            display:flex;align-items:center;
+            background:rgba(255,255,255,.15);
+            border-radius:3px;overflow:hidden;
+        }
+        .nav-search-box input{
+            background:transparent;border:none;outline:none;
+            color:#fff;font-size:.82rem;padding:6px 12px;width:160px;
+            font-family:'IBM Plex Sans',sans-serif;
+        }
+        .nav-search-box input::placeholder{color:rgba(255,255,255,.5);}
+        .nav-search-box button{
+            background:var(--accent);border:none;cursor:pointer;
+            color:#fff;padding:6px 12px;font-size:.8rem;
+        }
+
+        /* ===== PAGE BANNER ===== */
+        .page-banner{
+            background:linear-gradient(120deg,var(--deep) 0%,var(--navy) 55%,#1e4d7a 100%);
+            padding:44px 0;color:#fff;position:relative;overflow:hidden;
+        }
+        .page-banner::before{
+            content:'';position:absolute;
+            right:-60px;top:-60px;
+            width:320px;height:320px;
+            background:radial-gradient(circle,rgba(200,146,10,.18) 0%,transparent 65%);
+            border-radius:50%;
+        }
+        .page-banner::after{
+            content:'';position:absolute;
+            left:30%;bottom:-30px;
+            width:500px;height:2px;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+        }
+        .page-banner-inner{max-width:1200px;margin:0 auto;padding:0 40px;}
+        .banner-tag{
+            display:inline-block;
+            background:var(--accent);color:#fff;
+            font-size:.7rem;font-weight:600;letter-spacing:1.5px;
+            padding:3px 10px;border-radius:2px;margin-bottom:14px;
+            text-transform:uppercase;
+        }
+        .page-banner h1{
+            font-size:1.85rem;font-weight:700;letter-spacing:4px;
+            margin-bottom:10px;
+            font-family:'Noto Serif SC',serif;
+        }
+        .page-banner p{
+            font-size:.87rem;color:rgba(255,255,255,.68);
+            max-width:580px;line-height:1.75;
+        }
+
+        /* ===== BREADCRUMB ===== */
+        .breadcrumb-bar{
+            background:var(--white);
+            border-bottom:1px solid var(--border);
+            padding:8px 0;font-size:.75rem;color:var(--muted);
+        }
+        .breadcrumb-bar-inner{
+            max-width:1200px;margin:0 auto;padding:0 40px;
+            display:flex;align-items:center;gap:6px;
+        }
+        .breadcrumb-bar a{color:var(--primary);text-decoration:none;}
+        .breadcrumb-bar a:hover{text-decoration:underline;}
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content{max-width:1200px;margin:0 auto;padding:30px 40px 48px;}
+
+        /* ===== CARDS ===== */
+        .card{
+            background:var(--white);border-radius:4px;
+            box-shadow:0 1px 5px rgba(0,0,0,.07);
+            padding:22px 26px;margin-bottom:20px;
+            border:1px solid var(--border);
+        }
+        .card-header{
+            display:flex;align-items:center;justify-content:space-between;
+            margin-bottom:16px;padding-bottom:11px;
+            border-bottom:1px solid var(--border);
+        }
+        .card h2,.card-title{
+            font-size:.92rem;font-weight:600;color:var(--deep);
+            padding-left:10px;border-left:3px solid var(--primary);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary{
+            background:var(--primary);color:#fff;border:none;
+            padding:8px 20px;border-radius:3px;cursor:pointer;
+            font-size:.82rem;font-weight:500;text-decoration:none;
+            display:inline-block;transition:background .2s;
+            font-family:'IBM Plex Sans',sans-serif;
+        }
+        .btn-primary:hover{background:var(--deep);}
+        .btn-outline{
+            background:transparent;color:var(--primary);
+            border:1px solid var(--primary);
+            padding:7px 18px;border-radius:3px;cursor:pointer;
+            font-size:.82rem;text-decoration:none;display:inline-block;
+            transition:all .2s;
+        }
+        .btn-outline:hover{background:var(--primary);color:#fff;}
+        .btn-accent{
+            background:var(--accent);color:#fff;border:none;
+            padding:8px 20px;border-radius:3px;cursor:pointer;
+            font-size:.82rem;font-weight:500;text-decoration:none;
+            display:inline-block;transition:opacity .2s;
+        }
+        .btn-accent:hover{opacity:.85;}
+
+        /* ===== HINT / ALERT ===== */
+        .hint-box{
+            background:#eef4fb;border-left:4px solid var(--primary);
+            border-radius:2px;padding:12px 16px;font-size:.83rem;
+            color:#2c4a6e;line-height:1.65;margin-bottom:16px;
+        }
+        .alert-danger{
+            background:#fdf2f2;border-left:4px solid var(--red);
+            border-radius:2px;padding:12px 16px;font-size:.83rem;
+            color:#7a1f1f;margin-bottom:16px;
+        }
+
+        /* ===== TABLES ===== */
+        .table-card{
+            background:var(--white);border-radius:4px;
+            box-shadow:0 1px 5px rgba(0,0,0,.07);
+            overflow-x:auto;overflow-y:auto;max-height:520px;border:1px solid var(--border);
+        }
+        table.data-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+        .data-table th{
+            background:#f0f4f9;color:var(--deep);
+            text-align:left;padding:6px 8px;
+            border-bottom:2px solid var(--border);
+            white-space:nowrap;font-weight:600;font-size:.75rem;
+            text-transform:uppercase;letter-spacing:.4px;
+        }
+        .data-table td{
+            padding:6px 8px;border-bottom:1px solid #edf1f7;
+            color:var(--text);line-height:1.5;
+        }
+        .data-table tr:hover td{background:#f5f8fd;}
+
+        /* ===== PAGINATION ===== */
+        .pagination{display:flex;align-items:center;gap:6px;margin:18px 0;}
+        .pagination a,.pagination span{
+            padding:5px 12px;border:1px solid var(--border);
+            border-radius:3px;font-size:.83rem;text-decoration:none;
+            color:var(--primary);background:var(--white);transition:all .15s;
+        }
+        .pagination a:hover{background:#eef4fb;border-color:var(--primary);}
+        .pagination .current{background:var(--primary);color:#fff;border-color:var(--primary);}
+        .pagination .disabled{color:#bbb;pointer-events:none;}
+
+        /* ===== MOL IMG ===== */
+        .mol-img{max-width:160px;max-height:120px;border-radius:3px;border:1px solid var(--border);}
+
+        /* ===== FOOTER ===== */
+        .footer{background:var(--deep);color:rgba(255,255,255,.45);margin-top:0;}
+        .footer-main{
+            max-width:1200px;margin:0 auto;padding:40px 40px 30px;
+            display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:36px;
+        }
+        .footer-brand .f-logo{
+            font-size:1.3rem;font-weight:700;color:#fff;
+            letter-spacing:3px;font-family:'Noto Serif SC',serif;margin-bottom:12px;
+        }
+        .footer-brand p{font-size:.75rem;line-height:1.9;max-width:260px;}
+        .footer-col h4{
+            color:rgba(255,255,255,.75);font-size:.75rem;font-weight:600;
+            margin-bottom:14px;letter-spacing:1.5px;text-transform:uppercase;
+            padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1);
+        }
+        .footer-col a{
+            display:block;color:rgba(255,255,255,.4);text-decoration:none;
+            font-size:.75rem;margin-bottom:7px;transition:color .2s;
+        }
+        .footer-col a:hover{color:rgba(255,255,255,.8);}
+        .footer-bottom{
+            border-top:1px solid rgba(255,255,255,.08);
+            padding:14px 40px;
+            max-width:1200px;margin:0 auto;
+            display:flex;justify-content:space-between;align-items:center;
+            font-size:.73rem;color:rgba(255,255,255,.28);
+        }
+
+        /* ===== SECTION TITLE ===== */
+        .section-title{
+            display:flex;align-items:center;gap:10px;
+            margin-bottom:16px;
+        }
+        .section-title h3{
+            font-size:1rem;font-weight:600;color:var(--deep);
+            font-family:'Noto Serif SC',serif;
+        }
+        .section-title .title-line{
+            flex:1;height:1px;background:var(--border);
+        }
+        .section-title .title-more{
+            font-size:.76rem;color:var(--primary);text-decoration:none;
+        }
+        .section-title .title-more:hover{text-decoration:underline;}
+
+        {% block extra_style %}{% endblock %}
+    </style>
+</head>
+<body>
+
+<!-- TOP STRIP -->
+<div class="top-strip">
+    <div class="top-strip-inner">
+        <span>{{ server_date_zh }} &nbsp;·&nbsp; Polyamine Conjugate Database</span>
+    </div>
+</div>
+
+<!-- LOGO BAR -->
+<div class="logo-bar">
+    <div class="logo-bar-inner">
+        <div class="logo-left">
+            <div class="logo-emblem">
+                <span>PDB</span>
+                POLY
+            </div>
+            <div class="logo-name-wrap">
+                <a href="/home">PolyDB</a>
+                <div class="logo-en">Polyamine Conjugate Database</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="navbar-inner">
+        <div class="nav-links">
+            <a href="/home"             class="nav-item {% block nav_home %}{% endblock %}">Home</a>
+            <a href="/history"          class="nav-item {% block nav_history %}{% endblock %}">History Updates</a>
+            <a href="/search/advanced"  class="nav-item {% block nav_search %}{% endblock %}">Search</a>
+            <a href="/download"         class="nav-item {% block nav_download %}{% endblock %}">Download</a>
+            <a href="/contact"          class="nav-item {% block nav_contact %}{% endblock %}">Contact Us</a>
+        </div>
+        <div class="nav-search-box">
+            <input type="text" placeholder="Search molecules...">
+            <button>Go</button>
+        </div>
+    </div>
+</nav>
+
+<!-- PAGE BODY -->
+{% block body %}{% endblock %}
+
+<!-- FOOTER -->
+<div class="footer">
+    <div class="footer-main">
+        <div class="footer-brand">
+            <div class="f-logo">PolyDB</div>
+            <p>A comprehensive database of polyamine conjugates for drug discovery and research. Free for academic use. Redistribution requires a license.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Navigation</h4>
+            <a href="/home">Home</a>
+            <a href="/search/advanced">Advanced Search</a>
+            <a href="/search/similarity">Similarity Search</a>
+            <a href="/search/route">Route Search</a>
+            <a href="/download">Download</a>
+        </div>
+        <div class="footer-col">
+            <h4>Resources</h4>
+            <a href="https://go.drugbank.com/" target="_blank">DrugBank</a>
+            <a href="https://zinc.docking.org/" target="_blank">ZINC Database</a>
+            <a href="https://www.ebi.ac.uk/chembl/" target="_blank">ChEMBL</a>
+            <a href="https://www.rcsb.org/" target="_blank">RCSB PDB</a>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <a href="mailto:zhaoyuan@henu.edu.cn">zhaoyuan@henu.edu.cn</a>
+            <a href="#">Henan University</a>
+            <a href="#">Kaifeng, Henan 475004</a>
+            <a href="#">P.R. China · Room 521</a>
+        </div>
+    </div>
+    <div class="footer-bottom" style="max-width:1200px;margin:0 auto;padding:14px 40px;display:flex;justify-content:space-between;">
+        <span>© 2025 PolyDB · Henan University · All Rights Reserved</span>
+        <span>For licensing: zhaoyuan@henu.edu.cn</span>
+    </div>
+</div>
+
+{% block scripts %}{% endblock %}
+<div id="polydb-chat-toggle" style="
+    position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+    border-radius: 50%; background: #2563eb; color: white; display: flex;
+    align-items: center; justify-content: center; font-size: 24px; cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 9999;">🧪</div>
+
+<div id="polydb-chat-panel" style="
+    display: none; position: fixed; bottom: 90px; right: 24px; width: 960px; height: 680px;
+    max-height: 85vh; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    z-index: 9999; flex-direction: column; overflow: hidden; font-family: sans-serif;">
+
+  <div style="background: #2563eb; color: white; padding: 12px 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+    <span>PolyDB Retrieval Assistant</span>
+    <span id="polydb-chat-clear" style="font-size: 12px; font-weight: normal; cursor: pointer; opacity: 0.85;">Clear chat</span>
+  </div>
+
+  <div id="polydb-chat-messages" style="
+      flex: 1; overflow-y: auto; padding: 12px; font-size: 14px; line-height: 1.5;"></div>
+
+  <style>
+    #polydb-chat-messages table {
+      border-collapse: collapse; width: 100%; font-size: 13px; margin: 6px 0;
+    }
+    #polydb-chat-messages th, #polydb-chat-messages td {
+      border: 1px solid #ddd; padding: 4px 8px; text-align: left; white-space: nowrap;
+    }
+    #polydb-chat-messages th { background: #f1f5f9; }
+    #polydb-chat-messages .msg-table-wrap { overflow-x: auto; }
+    #polydb-chat-messages p { margin: 4px 0; }
+  </style>
+
+  <div style="display: flex; border-top: 1px solid #eee;">
+    <input id="polydb-chat-input" type="text" placeholder="Ask about compound retrieval..." style="
+        flex: 1; border: none; padding: 10px; font-size: 14px; outline: none;">
+    <button id="polydb-chat-send" style="
+        border: none; background: #2563eb; color: white; padding: 0 16px; cursor: pointer;">Send</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+<script>
+(function () {
+  const toggleBtn = document.getElementById('polydb-chat-toggle');
+  const panel = document.getElementById('polydb-chat-panel');
+  const messagesBox = document.getElementById('polydb-chat-messages');
+  const input = document.getElementById('polydb-chat-input');
+  const sendBtn = document.getElementById('polydb-chat-send');
+  const clearBtn = document.getElementById('polydb-chat-clear');
+
+  const STORAGE_KEY = 'polydb_chat_history';
+
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveHistory() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    } catch (e) {
+      // storage failed (private mode or quota exceeded) — silently ignore, doesn't affect this session
+    }
+  }
+
+  let history = loadHistory();  // client-side visible conversation history, restored from localStorage on load
+
+  const WELCOME_MESSAGE =
+    "Hi, I'm the PolyDB Retrieval Assistant. I can help you:\n" +
+    "- Search compounds by molecular weight, LogP, TPSA, QED and other properties\n" +
+    "- Find structurally similar compounds from a SMILES string\n" +
+    "- Look up synthesis route records for a given compound\n\n" +
+    "What would you like to search for?";
+
+  function appendMessage(role, text) {
+    const div = document.createElement('div');
+    div.style.margin = '8px 0';
+    div.style.textAlign = role === 'user' ? 'right' : 'left';
+    const bubble = document.createElement('span');
+    bubble.style.display = 'inline-block';
+    bubble.style.padding = '8px 12px';
+    bubble.style.borderRadius = '10px';
+    bubble.style.maxWidth = role === 'user' ? '80%' : '95%';
+    bubble.style.overflowX = 'auto';
+    bubble.style.background = role === 'user' ? '#2563eb' : '#f1f5f9';
+    bubble.style.color = role === 'user' ? 'white' : '#111';
+    if (role === 'assistant' && window.marked) {
+      bubble.innerHTML = marked.parse(text);
+    } else {
+      bubble.textContent = text;
+    }
+    div.appendChild(bubble);
+    messagesBox.appendChild(div);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+  }
+
+  // Restore previously saved message bubbles
+  history.forEach(function (m) {
+    appendMessage(m.role, m.content);
+  });
+
+  toggleBtn.addEventListener('click', function () {
+    const opening = panel.style.display === 'none' || !panel.style.display;
+    panel.style.display = opening ? 'flex' : 'none';
+    // Show a one-time welcome message the first time the panel is opened with no prior history.
+    // This is hardcoded on the client and never calls the API, so it costs no tokens.
+    if (opening && history.length === 0 && messagesBox.children.length === 0) {
+      appendMessage('assistant', WELCOME_MESSAGE);
+    }
+  });
+
+  clearBtn.addEventListener('click', function () {
+    history = [];
+    saveHistory();
+    messagesBox.innerHTML = '';
+  });
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    appendMessage('user', text);
+    input.value = '';
+    sendBtn.disabled = true;
+
+    const loadingDiv = document.createElement('div');
+    loadingDiv.textContent = 'Searching…';
+    loadingDiv.style.color = '#999';
+    loadingDiv.style.fontSize = '13px';
+    messagesBox.appendChild(loadingDiv);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+
+    try {
+      const resp = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, history: history })
+      });
+      const data = await resp.json();
+      loadingDiv.remove();
+
+      if (data.error) {
+        appendMessage('assistant', 'Error: ' + data.error);
+      } else {
+        appendMessage('assistant', data.answer);
+        history.push({ role: 'user', content: text });
+        history.push({ role: 'assistant', content: data.answer });
+        saveHistory();
+      }
+    } catch (e) {
+      loadingDiv.remove();
+      appendMessage('assistant', 'Request failed. Please check your network connection or try again later.');
+    } finally {
+      sendBtn.disabled = false;
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+})();
+</script>
+
+</body>
+</html>

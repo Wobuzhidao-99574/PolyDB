@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}PolyDB - Synthesis Route Search{% endblock %}
+{% block nav_search %}active{% endblock %}
+
+{% block extra_style %}
+.main-wrap { max-width: 1100px; margin: 24px auto 40px; padding: 0 40px; }
+.search-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--primary); margin-bottom: 22px; }
+.stab {
+    padding: 10px 26px; font-size: 0.92rem; color: #556677;
+    text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.stab:hover { color: var(--primary); }
+.stab.active { color: var(--primary); font-weight: 700; border-bottom-color: var(--primary); }
+
+.field { margin-bottom: 14px; }
+.field label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: #556677; }
+.field input[type=text] {
+    width: 100%; border: 1px solid var(--border); border-radius: 4px;
+    padding: 8px 10px; font-size: 0.9rem; font-family: monospace;
+}
+.row { display: flex; gap: 14px; }
+.row .field { flex: 1; }
+
+.route-img { max-width: 100%; border-radius: 4px; border: 1px solid var(--border); margin: 12px 0; }
+.mol-card { border: 1px solid var(--border); border-radius: 4px; padding: 14px 18px; margin-bottom: 14px; background: #fef8e8; }
+.mol-card h3 { font-size: 0.95rem; color: var(--deep-bg-2); margin-bottom: 8px; }
+.cond-list { list-style: disc; padding-left: 1.4em; font-size: 0.88rem; color: #445566; line-height: 1.8; }
+
+.sim-badge {
+    display: inline-block; background: #f8f0d8; color: var(--primary);
+    padding: 2px 8px; border-radius: 12px; font-size: 0.82rem; font-weight: 700;
+}
+{% endblock %}
+
+{% block body %}
+<div class="page-banner">
+    <h1>Search</h1>
+    <p>Advanced search · Similarity search · Synthesis route search</p>
+</div>
+<div class="breadcrumb">
+    <a href="/home">Home</a> &gt; <span>Synthesis Route Search</span>
+</div>
+
+<div class="main-wrap">
+    <div class="search-tabs">
+        <a href="/search/advanced"   class="stab">🔍 Advanced Search</a>
+        <a href="/search/similarity" class="stab">🔍 Similarity Search</a>
+        <a href="/search/route"      class="stab active">🔍 Synthesis Route Search</a>
+    </div>
+
+    <div class="card">
+        <h2>Synthesis Route Search</h2>
+        <div class="hint-box">
+            Enter a SMILES to find its synthesis route (if available) and similar molecules with synthesis routes. Similarity is calculated using Morgan fingerprints.
+        </div>
+        <form method="POST" action="/search/route">
+            <div class="field">
+                <label>SMILES</label>
+                <input type="text" name="smiles"
+                       value="{{ search_smile }}"
+                       placeholder="e.g. NCCCCNCCCN">
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Similarity Min</label>
+                    <input type="text" name="sim_min" value="{{ sim_min }}">
+                </div>
+                <div class="field">
+                    <label>Similarity Max</label>
+                    <input type="text" name="sim_max" value="{{ sim_max }}">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;padding:11px;">Search</button>
+        </form>
+    </div>
+
+    {% if error_msg %}
+    <div class="alert-danger">{{ error_msg }}</div>
+    {% endif %}
+
+    <!-- 精确匹配结果 -->
+    {% if main_result %}
+    <div class="card">
+        <h2>Exact Match</h2>
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Structure</th>
+                        {% for key in main_result[0].keys() %}
+                        {% if key != 'img' %}<th>{{ key }}</th>{% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in main_result %}
+                    <tr>
+                        <td>{% if row.img %}<img src="{{ row.img }}" class="mol-img" alt="mol">{% endif %}</td>
+                        {% for key, val in row.items() %}
+                        {% if key != 'img' %}
+                        <td style="{% if key == 'smiles' %}font-family:monospace;font-size:0.8rem;word-break:break-all;{% elif key == 'smarts' %}font-family:monospace;font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;{% endif %}"
+                            {% if key == 'smarts' %}title="{{ val if val is not none else '' }}"{% endif %}>
+                            {{ val if val is not none else '' }}
+                        </td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 合成路线图 -->
+        {% for row in main_result %}
+        {% if row.name and row.name in names %}
+        <div style="margin-top:16px;">
+            <div style="font-weight:700;color:var(--deep-bg-2);margin-bottom:8px;">Synthetic Route for {{ row.name }}</div>
+            <img src="{{ url_for('static', filename='img/routes/' + names[row.name]|basename) }}"
+                 class="route-img" alt="route">
+            {% if row.name in reaction_conditions %}
+            <div style="margin-top:10px;font-weight:600;color:var(--deep-bg-2);font-size:0.9rem;">Reaction Conditions</div>
+            <ul class="cond-list">
+                {% for cond in reaction_conditions[row.name] %}
+                <li>{{ cond }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- 相似分子结果 -->
+    {% if similar_results %}
+    <div class="card">
+        <h2>Similar Molecules with Synthesis Routes</h2>
+        {% for row in similar_results %}
+        {% if row.name and row.name in names and row.similar < 1.0 %}
+        <div class="mol-card">
+            <h3>
+                {{ row.name }}
+                <span class="sim-badge">Similarity: {{ "%.4f"|format(row.similar) }}</span>
+            </h3>
+            <p style="font-size:0.82rem;color:var(--muted);font-family:monospace;word-break:break-all;margin-bottom:10px;">
+                {{ row.smiles }}
+            </p>
+            <img src="{{ url_for('static', filename='img/routes/' + names[row.name]|basename) }}"
+                 class="route-img" alt="route">
+            {% if row.name in reaction_conditions %}
+            <div style="margin-top:8px;font-weight:600;color:var(--deep-bg-2);font-size:0.88rem;">Reaction Conditions</div>
+            <ul class="cond-list">
+                {% for cond in reaction_conditions[row.name] %}
+                <li>{{ cond }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 自定义 Jinja2 filter 在模板里无法直接用 basename，通过 JS 处理路由图路径
+// （路由图实际从 static/img/routes/ 提供）
+</script>
+{% endblock %}

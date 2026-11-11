@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+{% block title %}PolyDB - Home{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_style %}
+/* ===== HERO BANNER ===== */
+.hero{
+    background:linear-gradient(120deg,var(--deep) 0%,var(--navy) 55%,#1e4d7a 100%);
+    padding:56px 0 0;color:#fff;position:relative;overflow:hidden;
+}
+.hero::before{
+    content:'';position:absolute;
+    right:-80px;top:-80px;width:400px;height:400px;
+    background:radial-gradient(circle,rgba(200,146,10,.15) 0%,transparent 65%);
+    border-radius:50%;pointer-events:none;
+}
+.hero-inner{
+    max-width:1200px;margin:0 auto;padding:0 40px;
+    display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:end;
+}
+.hero-left{padding-bottom:40px;}
+.hero-tag{
+    display:inline-block;background:var(--accent);
+    color:#fff;font-size:.7rem;font-weight:600;
+    letter-spacing:1.5px;padding:3px 10px;
+    border-radius:2px;margin-bottom:16px;text-transform:uppercase;
+}
+.hero-title{
+    font-size:2.4rem;font-weight:700;letter-spacing:5px;
+    font-family:'Noto Serif SC',serif;margin-bottom:14px;line-height:1.2;
+}
+.hero-subtitle{
+    font-size:.9rem;color:rgba(255,255,255,.65);
+    line-height:1.8;max-width:480px;margin-bottom:28px;
+}
+.hero-right{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:6px 6px 0 0;
+    padding:20px 22px;
+    backdrop-filter:blur(4px);
+}
+.hero-right h4{
+    font-size:.75rem;font-weight:600;color:rgba(255,255,255,.5);
+    letter-spacing:1.5px;text-transform:uppercase;
+    margin-bottom:14px;padding-bottom:8px;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+.quick-links{display:flex;flex-direction:column;gap:8px;}
+.quick-link{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:4px;padding:10px 14px;
+    color:rgba(255,255,255,.85);text-decoration:none;
+    font-size:.85rem;font-weight:500;
+    transition:all .2s;
+}
+.quick-link:hover{background:rgba(255,255,255,.14);color:#fff;}
+.quick-link .ql-icon{
+    width:28px;height:28px;border-radius:4px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.8rem;flex-shrink:0;
+}
+
+/* ===== STATS BAR ===== */
+.stats-bar{
+    background:var(--white);
+    border-bottom:1px solid var(--border);
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.stats-bar-inner{
+    max-width:1200px;margin:0 auto;padding:0 40px;
+    display:grid;grid-template-columns:repeat(5,1fr);
+}
+.stat-item{
+    padding:20px 18px;
+    border-right:1px solid var(--border);
+    transition:background .2s;
+}
+.stat-item:last-child{border-right:none;}
+.stat-item:hover{background:#f5f8fd;}
+.stat-dot{
+    display:inline-block;width:8px;height:8px;
+    border-radius:50%;margin-right:6px;vertical-align:middle;
+}
+.stat-lbl{
+    font-size:.73rem;color:var(--muted);font-weight:500;
+    margin-bottom:6px;letter-spacing:.3px;
+}
+.stat-val{
+    font-size:1.65rem;font-weight:700;line-height:1;
+    font-family:'IBM Plex Mono',monospace;
+}
+.stat-val.c-green{color:#166534;}
+.stat-val.c-blue {color:var(--primary);}
+.stat-val.c-red  {color:var(--red);}
+.stat-val.c-teal {color:var(--teal);}
+.stat-val.c-amber{color:var(--accent);}
+
+/* ===== MAIN GRID ===== */
+.home-grid{
+    max-width:1200px;margin:0 auto;padding:30px 40px 48px;
+    display:grid;grid-template-columns:1fr 320px;gap:24px;
+}
+
+/* ===== VIDEO CARD ===== */
+.video-card{
+    background:var(--white);border:1px solid var(--border);
+    border-radius:4px;overflow:hidden;
+    box-shadow:0 1px 5px rgba(0,0,0,.07);
+    margin-bottom:20px;
+}
+.video-card-header{
+    padding:14px 18px;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:8px;
+}
+.video-card-header h3{font-size:.9rem;font-weight:600;color:var(--deep);}
+.video-card video{width:100%;display:block;max-height:420px;object-fit:cover;}
+
+/* ===== ABOUT CARD ===== */
+.about-card{
+    background:var(--white);border:1px solid var(--border);
+    border-radius:4px;padding:22px 26px;
+    box-shadow:0 1px 5px rgba(0,0,0,.07);
+    margin-bottom:20px;
+}
+.about-card h3{
+    font-size:.95rem;font-weight:600;color:var(--deep);
+    padding-left:10px;border-left:3px solid var(--primary);
+    margin-bottom:14px;
+}
+.about-card p{
+    font-size:.85rem;color:#3a5068;line-height:1.85;margin-bottom:12px;
+}
+.about-card p:last-child{margin-bottom:0;}
+
+/* ===== INSTITUTION CARD（左侧，与about同宽）===== */
+.inst-card{
+    background:var(--white);border:1px solid var(--border);
+    border-radius:4px;padding:22px 26px;
+    box-shadow:0 1px 5px rgba(0,0,0,.07);
+    margin-bottom:20px;
+}
+.inst-card h3{
+    font-size:.95rem;font-weight:600;color:var(--deep);
+    padding-left:10px;border-left:3px solid var(--primary);
+    margin-bottom:14px;
+}
+.inst-card-body{
+    display:grid;grid-template-columns:1fr 1fr;gap:16px;
+    font-size:.84rem;color:#3a5068;line-height:2;
+}
+.inst-card-body strong{color:var(--deep);font-weight:600;}
+
+/* ===== SIDEBAR WIDGETS ===== */
+.sidebar-widget{
+    background:var(--white);border:1px solid var(--border);
+    border-radius:4px;overflow:hidden;
+    box-shadow:0 1px 5px rgba(0,0,0,.07);
+    margin-bottom:18px;
+}
+.widget-header{
+    background:#f0f4f9;padding:11px 16px;
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;
+}
+.widget-header h4{
+    font-size:.82rem;font-weight:600;color:var(--deep);
+    padding-left:8px;border-left:2px solid var(--primary);
+}
+.widget-header a{font-size:.73rem;color:var(--primary);text-decoration:none;}
+.widget-header a:hover{text-decoration:underline;}
+.widget-body{padding:14px 16px;}
+
+/* 快速搜索 */
+.search-widget input{
+    width:100%;padding:8px 12px;
+    border:1px solid var(--border);border-radius:3px;
+    font-size:.84rem;font-family:'IBM Plex Sans',sans-serif;
+    color:var(--text);margin-bottom:8px;outline:none;
+    transition:border-color .2s;
+}
+.search-widget input:focus{border-color:var(--primary);}
+.search-widget select{
+    width:100%;padding:7px 10px;
+    border:1px solid var(--border);border-radius:3px;
+    font-size:.82rem;color:var(--text);margin-bottom:10px;
+    font-family:'IBM Plex Sans',sans-serif;outline:none;
+    background:var(--white);
+}
+
+/* 更新日志列表 */
+.update-list{list-style:none;}
+.update-list li{
+    padding:9px 0;border-bottom:1px solid #edf1f7;
+    font-size:.8rem;line-height:1.6;
+}
+.update-list li:last-child{border-bottom:none;}
+.update-date{
+    display:inline-block;
+    background:#eef4fb;color:var(--primary);
+    font-size:.7rem;font-weight:600;
+    padding:1px 7px;border-radius:2px;
+    margin-bottom:4px;font-family:'IBM Plex Mono',monospace;
+}
+.update-text{color:#3a5068;}
+
+/* 外部链接 */
+.ext-links{display:flex;flex-direction:column;gap:8px;}
+.ext-link{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 12px;border:1px solid var(--border);
+    border-radius:3px;text-decoration:none;
+    color:var(--text);font-size:.82rem;font-weight:500;
+    transition:all .2s;
+}
+.ext-link:hover{border-color:var(--primary);color:var(--primary);background:#f5f8fd;}
+.ext-link-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--primary);flex-shrink:0;
+}
+{% endblock %}
+
+{% block body %}
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-inner">
+        <div class="hero-left">
+            <div class="hero-title">PolyDB</div>
+            <div class="hero-subtitle">
+                A comprehensive database of polyamine conjugates for drug discovery and research.
+                Featuring 133,073 compounds with structural, physicochemical and synthesis data.
+            </div>
+        </div>
+        <div class="hero-right">
+            <h4>Quick Access</h4>
+            <div class="quick-links">
+                <a href="/search/advanced" class="quick-link">
+                    <div class="ql-icon" style="background:rgba(26,95,168,.3);">🔍</div>
+                    Advanced Search
+                </a>
+                <a href="/search/similarity" class="quick-link">
+                    <div class="ql-icon" style="background:rgba(14,124,110,.3);">⚗️</div>
+                    Similarity Search
+                </a>
+                <a href="/search/route" class="quick-link">
+                    <div class="ql-icon" style="background:rgba(200,146,10,.3);">🧪</div>
+                    Synthesis Route
+                </a>
+                <a href="/download" class="quick-link">
+                    <div class="ql-icon" style="background:rgba(181,40,40,.3);">📥</div>
+                    Download CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+    <div class="stats-bar-inner">
+        <div class="stat-item">
+            <div class="stat-lbl"><span class="stat-dot" style="background:#166534;"></span>Total Compounds</div>
+            <div class="stat-val c-green">133,073</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-lbl"><span class="stat-dot" style="background:var(--primary);"></span>Spermidine</div>
+            <div class="stat-val c-blue">1,167</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-lbl"><span class="stat-dot" style="background:var(--teal);"></span>Spermine</div>
+            <div class="stat-val c-teal">221</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-lbl"><span class="stat-dot" style="background:var(--accent);"></span>Our Compounds</div>
+            <div class="stat-val c-amber">202</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-lbl"><span class="stat-dot" style="background:var(--red);"></span>Last Updated</div>
+            <div class="stat-val c-red" style="font-size:1.1rem;margin-top:4px;">2026-10-10</div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="home-grid">
+
+    <!-- 左侧主内容 -->
+    <div>
+        <!-- 视频 -->
+        <div class="video-card">
+            <div class="video-card-header">
+                <span>🎬</span>
+                <h3>Introduction to PolyDB</h3>
+            </div>
+            <video autoplay loop muted controls>
+                <source src="{{ url_for('static', filename='video/cartoon.mp4') }}" type="video/mp4">
+            </video>
+        </div>
+
+        <!-- About -->
+        <div class="about-card">
+            <h3>About PolyDB</h3>
+            <p>
+                Polyamine conjugates refer to compounds that are covalently bonded between bioactive organic
+                molecules with pharmacological properties and polyamine skeletons. These compounds exhibit both
+                commonalities and diversities in their structural and functional characteristics. By harnessing
+                the benefits of polyamines, these conjugates can regulate polyamine levels, enhance the
+                liposolubility and targeting capabilities of bioactive organic molecules, thus holding significant
+                potential for applications in anti-cancer and anti-inflammatory therapies.
+            </p>
+            <p>
+                The lack of scientific integration and comprehensive understanding of the shared features of
+                polyamine conjugates has resulted in uncertainty and inefficiency in the design and synthesis of
+                these molecules. PolyDB serves as a crucial resource to effectively manage and integrate
+                relevant structural and functional information.
+            </p>
+            <div style="margin-top:16px;">
+                <a href="/search/advanced" class="btn-primary">Start Searching</a>
+                &nbsp;
+                <a href="/download" class="btn-outline">Download Data</a>
+            </div>
+        </div>
+
+        <!-- Institution（移到About下面，与About同宽）-->
+        <div class="inst-card">
+            <h3>Institution</h3>
+            <div class="inst-card-body">
+                <div>
+                    <strong>Henan University</strong><br>
+                    Key Laboratory of Natural Drug Innovation and Translational <br>
+                </div>
+                <div>
+                    Kaifeng, Henan 475004<br>
+                    P.R. China<br>
+                    📧 zhaoyuan@henu.edu.cn
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧边栏 -->
+    <div>
+        <!-- 快速搜索 -->
+        <div class="sidebar-widget">
+            <div class="widget-header">
+                <h4>Quick Search</h4>
+                <a href="/search/advanced">More →</a>
+            </div>
+            <div class="widget-body search-widget">
+                <form action="/search/advanced" method="get">
+                    <input type="text" name="name" placeholder="Search by name or SMILES...">
+                    <select name="category">
+                        <option value="ALL">All Categories</option>
+                        <option value="spermidine">Spermidine Conjugate</option>
+                        <option value="spermine">Spermine Conjugate</option>
+                    </select>
+                    <button type="submit" class="btn-primary" style="width:100%;text-align:center;">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 更新日志 -->
+        <div class="sidebar-widget">
+            <div class="widget-header">
+                <h4>Recent Updates</h4>
+                <a href="/history">All →</a>
+            </div>
+            <div class="widget-body">
+                <ul class="update-list">
+                    <li>
+                        <div class="update-date">2026-10-10</div>
+                        <div class="update-text">We re-screened the data in the database and removed duplicate entries. After deduplication, 133,073 records remained, including 131,685 in the “other” category, 1,167 spermidine entries, and 221 spermine entries.</div>
+                    </li>
+                    <li>
+                        <div class="update-date">2026-05-14</div>
+                        <div class="update-text">Added 29 new FDA-approved drug entries; recalculated QED for all 142,376 compounds; migrated platform from Streamlit to Flask (v2.0).</div>
+                    </li>
+                    <li>
+                        <div class="update-date">2025-03-03</div>
+                        <div class="update-text">Optimized search speed and added reaction conditions for synthesis routes.</div>
+                    </li>
+                    <li>
+                        <div class="update-date">2025-02-18</div>
+                        <div class="update-text">Added 206 in-house polyamine molecules with synthesis routes.</div>
+                    </li>
+                    <li>
+                        <div class="update-date">2024-12-08</div>
+                        <div class="update-text">Re-screened database, finalized 142,142 polyamine conjugates.</div>
+                    </li>
+                    <li>
+                        <div class="update-date">2024-06-10</div>
+                        <div class="update-text">NCN v2.0 expanded search scope to 370,000+ compounds.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 外部链接 -->
+        <div class="sidebar-widget">
+            <div class="widget-header">
+                <h4>External Resources</h4>
+            </div>
+            <div class="widget-body">
+                <div class="ext-links">
+                    <a href="https://go.drugbank.com/" target="_blank" class="ext-link">
+                        <div class="ext-link-dot" style="background:#1a5fa8;"></div>DrugBank
+                    </a>
+                    <a href="https://zinc.docking.org/" target="_blank" class="ext-link">
+                        <div class="ext-link-dot" style="background:#0e7c6e;"></div>ZINC Database
+                    </a>
+                    <a href="https://www.ebi.ac.uk/chembl/" target="_blank" class="ext-link">
+                        <div class="ext-link-dot" style="background:#c8920a;"></div>ChEMBL
+                    </a>
+                    <a href="https://www.rcsb.org/" target="_blank" class="ext-link">
+                        <div class="ext-link-dot" style="background:#b52828;"></div>RCSB PDB
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

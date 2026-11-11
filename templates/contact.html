@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}PolyDB - Contact Us{% endblock %}
+{% block nav_contact %}active{% endblock %}
+
+{% block body %}
+<div class="page-banner">
+    <h1>Contact Us</h1>
+    <p>For questions, licensing, or collaboration</p>
+</div>
+<div class="breadcrumb">
+    <a href="/home">Home</a> &gt; <span>Contact Us</span>
+</div>
+
+<div style="max-width:800px;margin:28px auto 40px;padding:0 40px;">
+    <div class="card">
+        <h2>License & Access</h2>
+        <p style="font-size:0.93rem;color:#5a4820;line-height:1.85;">
+            <strong>PolyDB is free for academic use.</strong>
+            Re-distribution of the data, in whole or in part, requires a license.
+            For questions regarding PolyDB contents, licensing, or other support, please reach out to us by:
+        </p>
+        <div style="margin-top:14px;padding:14px 18px;background:#f8f0d8;border-radius:4px;font-family:monospace;font-size:0.95rem;color:var(--deep-bg-2);">
+            zhaoyuan@henu.edu.cn
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Location</h2>
+        <p style="font-size:0.93rem;color:#5a4820;line-height:2;">
+            <strong>The Key Laboratory of Natural Medicine and Immuno-Engineering</strong><br>
+            Henan University<br>
+            Kaifeng, Henan 475004, P.R. China<br>
+            Key Laboratory Building, Room 521
+        </p>
+    </div>
+</div>
+{% endblock %}

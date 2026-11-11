@@ -1,0 +1,13 @@
+Flask>=2.3
+gunicorn>=21.0
+psycopg2-binary>=2.9
+pandas>=1.5
+numpy>=1.24
+rdkit>=2023.3
+Pillow>=10.0
+openai
+SQLAlchemy
+cryptography
+rich
+gensim
+mol2vec

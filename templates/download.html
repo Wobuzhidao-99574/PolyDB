@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}PolyDB - Download{% endblock %}
+{% block nav_download %}active{% endblock %}
+
+{% block extra_style %}
+.main-wrap { max-width: 1000px; margin: 28px auto 40px; padding: 0 40px; }
+.dl-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.dl-btn {
+    display: block; width: 100%; background: var(--primary); color: #fff;
+    border: none; padding: 14px 20px; border-radius: 4px; cursor: pointer;
+    font-size: 1rem; font-weight: 700; letter-spacing: 1px;
+    text-align: center; text-decoration: none; margin-top: 16px;
+    transition: background 0.2s;
+}
+.dl-btn:hover { background: var(--deep-bg-2); }
+
+.link-card {
+    display: flex; flex-direction: column; gap: 14px;
+}
+.ext-link {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-decoration: none;
+    color: #5a4820;
+    font-size: 0.88rem;
+    transition: border-color 0.2s;
+}
+.ext-link:hover { border-color: var(--primary); color: var(--primary); }
+.ext-link img { width: 80px; object-fit: contain; }
+{% endblock %}
+
+{% block body %}
+<div class="page-banner">
+    <h1>Download</h1>
+    <p>Download PolyDB data in CSV format · Free for academic use</p>
+</div>
+<div class="breadcrumb">
+    <a href="/home">Home</a> &gt; <span>Download</span>
+</div>
+
+<div class="main-wrap">
+    <div class="dl-grid">
+        <!-- 下载区 -->
+        <div class="card">
+            <h2>Download PolyDB Data</h2>
+            <p style="font-size:0.9rem;color:#5a4820;line-height:1.8;">
+                <strong>A portion of polyamine conjugates are synthesized by our group.</strong>
+                If you would like to access the detailed data, please contact us, and we will provide them to you free of charge.
+            </p>
+            <p style="font-size:0.88rem;color:var(--muted);margin-top:10px;">
+                The CSV file contains compound IDs and SMILES strings for all entries in PolyDB.
+            </p>
+            <a href="/download/csv" class="dl-btn">⬇ Download PolyDB (CSV)</a>
+        </div>
+
+        <!-- 外部链接区 -->
+        <div class="card">
+            <h2>External Links</h2>
+            <div class="link-card">
+                <a class="ext-link" href="https://go.drugbank.com/" target="_blank">
+                    <img src="/static/Fig/drugbank.png" alt="DrugBank">
+                    <span>DrugBank</span>
+                </a>
+                <a class="ext-link" href="https://zinc.docking.org/" target="_blank">
+                    <img src="/static/Fig/zinc.png" alt="ZINC">
+                    <span>ZINC Database</span>
+                </a>
+                <a class="ext-link" href="https://www.ebi.ac.uk/chembl/" target="_blank">
+                    <img src="/static/Fig/chembl.png" alt="ChEMBL">
+                    <span>ChEMBL</span>
+                </a>
+                <a class="ext-link" href="https://www.rcsb.org/" target="_blank">
+                    <img src="/static/Fig/pdb.png" alt="PDB">
+                    <span>Protein Data Bank</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

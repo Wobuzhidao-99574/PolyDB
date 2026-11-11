@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}PolyDB - History Updates{% endblock %}
+{% block nav_history %}active{% endblock %}
+
+{% block body %}
+<div class="page-banner">
+    <h1>History Updates</h1>
+    <p>Version history and changelog of PolyDB</p>
+</div>
+<div class="breadcrumb">
+    <a href="/home">Home</a> &gt; <span>History Updates</span>
+</div>
+
+<div style="max-width:860px;margin:28px auto 40px;padding:0 40px;">
+    <div class="card">
+        <h2>Changelog</h2>
+        <ul style="list-style:none;padding:0;">
+            <li style="border-bottom:1px solid #eef2f8;padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2026-10-10</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    We re-screened the data in the database and removed duplicate entries. After deduplication, 133,073 records remained, including 131,685 in the “other” category, 1,167 spermidine entries, and 221 spermine entries.
+                </p>
+            </li>
+            <li style="border-bottom:1px solid #eef2f8;padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2026-05-14</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    Added 29 newly curated polyamine conjugate entries (L00600118–L00600146), 
+                            corrected and standardized QED scores across all 142,376 compounds, and relaunched the web 
+                            interface on a Flask-based architecture with improved performance and UI.
+                </p>
+            </li>
+            <li style="border-bottom:1px solid #eef2f8;padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2025-03-03</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    We made optimizations in search speed and data result display. In the advanced search module, we changed the query output results to page display, which will increase the search speed. In the synthesis route search module, we added the reaction conditions of each step for reference.
+                </p>
+            </li>
+            <li style="border-bottom:1px solid #eef2f8;padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2025-02-18</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    We added 206 polyamine molecules synthesized by our own laboratory to the database, along with their synthesis routes. At the same time, we added a new function for similar search of synthesis routes. Finally, we made some changes to the website interface.
+                </p>
+            </li>
+            <li style="border-bottom:1px solid #eef2f8;padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2024-12-08</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    We manually re-screened the original more than 370,000 polyamine molecules and ultimately screened out 142,142 polyamine conjugates that met our new standards. The classification work is still in progress.
+                </p>
+            </li>
+            <li style="border-bottom:1px solid #eef2f8;padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2024-06-10</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    In order to further screen possible polyamine conjugates, NCN v2.0 was developed to expand the search scope of polyamine conjugates and find more than 370,000 possible polyamine conjugate analogs.
+                </p>
+            </li>
+            <li style="border-bottom:1px solid #eef2f8;padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2024-03-08</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    By developing a cleaning tool such as NCN v1.0, the number of polyamine conjugates initially screened was 227,389.
+                </p>
+            </li>
+            <li style="padding:14px 0;">
+                <span style="color:#1a7a3c;font-weight:700;">2023-12-02</span>
+                <p style="margin-top:6px;font-size:0.9rem;color:#334466;line-height:1.75;">
+                    Initially built and tested the database website.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
